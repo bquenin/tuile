@@ -15,6 +15,7 @@ type Layer struct {
 	pixelWidth, pixelHeight int
 	tileWidth, tileHeight   int
 	image                   *image.Paletted
+	repeat                  bool
 }
 
 // NewLayer instantiates a new layer
@@ -32,9 +33,14 @@ func NewLayer(tileMap *tmxmap.Map) (*Layer, error) {
 		pixelHeight: tileMap.Height * tileMap.TileHeight,
 		tileWidth:   tileMap.TileWidth,
 		tileHeight:  tileMap.TileHeight,
+		repeat:      false,
 	}, nil
 }
 
 func (l *Layer) SetOrigin(x int, y int) {
 	l.origin = image.Point{X: x, Y: y}
+}
+
+func (l *Layer) SetRepeat(repeat bool) {
+	l.repeat = repeat
 }

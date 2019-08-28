@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/bquenin/tmxmap"
 	"image/color"
 	"log"
 
+	"github.com/bquenin/tmxmap"
 	"github.com/bquenin/tuile"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
@@ -17,9 +17,9 @@ const (
 )
 
 var (
-	engine                 *tuile.Engine
-	background, foreground *tuile.Layer
-	x, y                   int
+	engine *tuile.Engine
+	layer  *tuile.Layer
+	x, y   = 0, 0
 )
 
 func update(screen *ebiten.Image) error {
@@ -35,8 +35,7 @@ func update(screen *ebiten.Image) error {
 	if ebiten.IsKeyPressed(ebiten.KeyUp) {
 		y--
 	}
-	background.SetOrigin(x, screenHeight/2+y)
-	foreground.SetOrigin(x*2, screenHeight/2+y*2)
+	layer.SetOrigin(x, y)
 
 	if ebiten.IsDrawingSkipped() {
 		return nil
@@ -63,19 +62,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	background, err = tuile.NewLayer(tileMap)
+	layer, err = tuile.NewLayer(tileMap)
 	if err != nil {
 		log.Fatal(err)
 	}
-	engine.AddLayer(background)
+	layer.SetRepeat(true)
+	engine.AddLayer(layer)
 
-	foreground, err = tuile.NewLayer(tileMap)
-	if err != nil {
-		log.Fatal(err)
-	}
-	engine.AddLayer(foreground)
-
-	if err := ebiten.Run(update, screenWidth, screenHeight, 4, "scrolling"); err != nil {
+	if err := ebiten.Run(update, screenWidth, screenHeight, 4, "repeat"); err != nil {
 		log.Fatal(err)
 	}
 }

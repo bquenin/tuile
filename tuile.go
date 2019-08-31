@@ -57,6 +57,9 @@ func (t *Engine) DrawFrame() *image.RGBA {
 			t.fillBackgroundLine(line, t.backgroundColor, t.width)
 		}
 		for _, layer := range t.layers {
+			if layer.disabled {
+				continue
+			}
 			if layer.repeat {
 				t.drawLayerLineRepeat(line, layer)
 			} else {

@@ -57,7 +57,7 @@ func main() {
 	engine = tuile.NewEngine(screenWidth, screenHeight)
 	engine.SetBackgroundColor(color.Black)
 
-	tileMap, err := tmxmap.Load("../assets/zelda/overworld.tmx")
+	tileMap, err := tmxmap.Load("../assets/zelda3/overworld.tmx")
 	if err != nil {
 		log.Fatal(err)
 	}

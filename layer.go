@@ -16,6 +16,7 @@ type Layer struct {
 	tileWidth, tileHeight   int
 	image                   *image.Paletted
 	repeat                  bool
+	disabled                bool
 }
 
 // NewLayer instantiates a new layer
@@ -43,4 +44,12 @@ func (l *Layer) SetOrigin(x int, y int) {
 
 func (l *Layer) SetRepeat(repeat bool) {
 	l.repeat = repeat
+}
+
+func (l *Layer) Disable() {
+	l.disabled = true
+}
+
+func (l *Layer) Enable() {
+	l.disabled = false
 }

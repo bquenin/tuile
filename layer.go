@@ -9,11 +9,13 @@ import (
 
 // Layer structure
 type Layer struct {
-	tileMap                 *tmxmap.Map
+	//tileMap                 *tmxmap.Map
 	origin                  image.Point
 	width, height           int
 	pixelWidth, pixelHeight int
 	tileWidth, tileHeight   int
+	tiles                   []*tmxmap.TileInfo
+	tileSet                 *tmxmap.TileSet
 	image                   *image.Paletted
 	repeat                  bool
 	disabled                bool
@@ -26,14 +28,16 @@ func NewLayer(tileMap *tmxmap.Map) (*Layer, error) {
 		return nil, errors.New("tileset image is not paletted")
 	}
 	return &Layer{
-		tileMap:     tileMap,
+		//tileMap:     tileMap,
+		tiles:       tileMap.Layers[0].Tiles,
+		tileSet:     &tileMap.TileSets[0],
 		image:       image,
-		width:       tileMap.Width,
-		height:      tileMap.Height,
-		pixelWidth:  tileMap.Width * tileMap.TileWidth,
-		pixelHeight: tileMap.Height * tileMap.TileHeight,
-		tileWidth:   tileMap.TileWidth,
-		tileHeight:  tileMap.TileHeight,
+		width:       tileMap.Layers[0].Width,
+		height:      tileMap.Layers[0].Height,
+		pixelWidth:  tileMap.Layers[0].Width * tileMap.TileSets[0].TileWidth,
+		pixelHeight: tileMap.Layers[0].Height * tileMap.TileSets[0].TileHeight,
+		tileWidth:   tileMap.TileSets[0].TileWidth,
+		tileHeight:  tileMap.TileSets[0].TileHeight,
 		repeat:      false,
 	}, nil
 }

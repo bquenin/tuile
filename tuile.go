@@ -17,20 +17,6 @@ type Engine struct {
 	layers          []*Layer
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
 // NewEngine instantiates a new tuile engine
 func NewEngine(width, height int) *Engine {
 	return &Engine{
@@ -84,57 +70,77 @@ func (t *Engine) AddLayer(layer ...*Layer) {
 	t.layers = append(t.layers, layer...)
 }
 
-func (t *Engine) drawTilePixel(x, y int, layer *Layer, tileID int, xTile, yTile int) {
-	xImage := tileID % layer.tileMap.TileSets[0].Columns
-	yImage := tileID / layer.tileMap.TileSets[0].Columns
-	xImage *= layer.tileWidth
-	yImage *= layer.tileHeight
-	xImage += xTile % layer.tileWidth
-	yImage += yTile % layer.tileHeight
-	src := layer.image.PixOffset(xImage, yImage)
-	r, g, b, a := layer.image.Palette[layer.image.Pix[src]].RGBA()
-	if a == 0 {
-		return
-	}
-
-	dst := t.pixels.PixOffset(x, y)
-	t.pixels.Pix[dst] = uint8(r)
-	t.pixels.Pix[dst+1] = uint8(g)
-	t.pixels.Pix[dst+2] = uint8(b)
-}
-
 func (t *Engine) drawLayerLine(line int, layer *Layer) {
 	yTile := layer.origin.Y + line
 	if yTile < 0 || yTile >= layer.pixelHeight {
 		return
 	}
-	for x := 0; x < t.width; x++ {
+	for x := 0; x < t.width; {
 		xTile := layer.origin.X + x
 		if xTile < 0 || xTile >= layer.pixelWidth {
+			x++
 			continue
 		}
-		tile := layer.tileMap.Layers[0].Tiles[yTile/layer.tileHeight*layer.width+xTile/layer.tileWidth]
+		tile := layer.tiles[yTile/layer.tileHeight*layer.width+xTile/layer.tileWidth]
 		if tile.Nil {
+			x++
 			continue
 		}
-		t.drawTilePixel(x, line, layer, int(tile.ID), xTile, yTile)
+
+		yImage := int(tile.ID) / layer.tileSet.Columns
+		yImage *= layer.tileHeight
+		yImage += yTile % layer.tileHeight
+
+		xImage := int(tile.ID) % layer.tileSet.Columns
+		xImage *= layer.tileWidth
+		for xx := xImage + xTile%layer.tileWidth; xx < xImage+layer.tileWidth && x < t.width; xx, x = xx+1, x+1 {
+			src := layer.image.PixOffset(xx, yImage)
+			r, g, b, a := layer.image.Palette[layer.image.Pix[src]].RGBA()
+			if a == 0 {
+				continue
+			}
+
+			dst := t.pixels.PixOffset(x, line)
+			t.pixels.Pix[dst] = uint8(r)
+			t.pixels.Pix[dst+1] = uint8(g)
+			t.pixels.Pix[dst+2] = uint8(b)
+		}
 	}
 }
 
 func (t *Engine) drawLayerLineRepeat(line int, layer *Layer) {
-	for x := 0; x < t.width; x++ {
+	yTile := (layer.origin.Y + line) % layer.pixelHeight
+	if yTile < 0 {
+		yTile += layer.pixelHeight
+	}
+	for x := 0; x < t.width; {
 		xTile := (layer.origin.X + x) % layer.pixelWidth
-		yTile := (layer.origin.Y + line) % layer.pixelHeight
 		if xTile < 0 {
 			xTile += layer.pixelWidth
 		}
-		if yTile < 0 {
-			yTile += layer.pixelHeight
-		}
-		tile := layer.tileMap.Layers[0].Tiles[yTile/layer.tileHeight*layer.width+xTile/layer.tileWidth]
+		tile := layer.tiles[yTile/layer.tileHeight*layer.width+xTile/layer.tileWidth]
 		if tile.Nil {
+			x++
 			continue
 		}
-		t.drawTilePixel(x, line, layer, int(tile.ID), xTile, yTile)
+
+		yImage := int(tile.ID) / layer.tileSet.Columns
+		yImage *= layer.tileHeight
+		yImage += yTile % layer.tileHeight
+
+		xImage := int(tile.ID) % layer.tileSet.Columns
+		xImage *= layer.tileWidth
+		for xx := xImage + xTile%layer.tileWidth; xx < xImage+layer.tileWidth && x < t.width; xx, x = xx+1, x+1 {
+			src := layer.image.PixOffset(xx, yImage)
+			r, g, b, a := layer.image.Palette[layer.image.Pix[src]].RGBA()
+			if a == 0 {
+				continue
+			}
+
+			dst := t.pixels.PixOffset(x, line)
+			t.pixels.Pix[dst] = uint8(r)
+			t.pixels.Pix[dst+1] = uint8(g)
+			t.pixels.Pix[dst+2] = uint8(b)
+		}
 	}
 }

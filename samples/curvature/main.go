@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	"image/color"
-	"log"
-	"math"
-
 	"github.com/bquenin/tmxmap"
 	"github.com/bquenin/tuile"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
+	"image/color"
+	"log"
+	"math"
 )
 
 const (
@@ -72,12 +71,13 @@ func update(screen *ebiten.Image) error {
 }
 
 func main() {
-	engine = tuile.NewEngine(screenWidth, screenHeight)
-	engine.SetBackgroundColor(color.Black)
-	engine.SetHBlank(hBlank)
 	for n := 0; n < screenHeight; n++ {
 		offsets[n] = math.Tan(lerp(n, 0, screenHeight, 105.0, 180.0) * math.Pi / 180)
 	}
+
+	engine = tuile.NewEngine(screenWidth, screenHeight)
+	engine.SetBackgroundColor(color.Black)
+	engine.SetHBlank(hBlank)
 
 	overworldMap, err := tmxmap.Load("../assets/zelda3/overworld.tmx")
 	if err != nil {

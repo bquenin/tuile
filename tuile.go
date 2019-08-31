@@ -46,11 +46,7 @@ func (t *Engine) DrawFrame() *image.RGBA {
 			if layer.disabled {
 				continue
 			}
-			if layer.repeat {
-				t.drawLayerLineRepeat(line, layer)
-			} else {
-				t.drawLayerLine(line, layer)
-			}
+			t.drawLayerLine(line, layer)
 		}
 	}
 	return t.pixels
@@ -73,50 +69,22 @@ func (t *Engine) AddLayer(layer ...*Layer) {
 func (t *Engine) drawLayerLine(line int, layer *Layer) {
 	yTile := layer.origin.Y + line
 	if yTile < 0 || yTile >= layer.pixelHeight {
-		return
+		if !layer.repeat {
+			return
+		}
+		yTile += layer.pixelHeight
+		yTile %= layer.pixelHeight
 	}
+
 	for x := 0; x < t.width; {
 		xTile := layer.origin.X + x
 		if xTile < 0 || xTile >= layer.pixelWidth {
-			x++
-			continue
-		}
-		tile := layer.tiles[yTile/layer.tileHeight*layer.width+xTile/layer.tileWidth]
-		if tile.Nil {
-			x++
-			continue
-		}
-
-		yImage := int(tile.ID) / layer.tileSet.Columns
-		yImage *= layer.tileHeight
-		yImage += yTile % layer.tileHeight
-
-		xImage := int(tile.ID) % layer.tileSet.Columns
-		xImage *= layer.tileWidth
-		for xx := xImage + xTile%layer.tileWidth; xx < xImage+layer.tileWidth && x < t.width; xx, x = xx+1, x+1 {
-			src := layer.image.PixOffset(xx, yImage)
-			r, g, b, a := layer.image.Palette[layer.image.Pix[src]].RGBA()
-			if a == 0 {
+			if !layer.repeat {
+				x++
 				continue
 			}
-
-			dst := t.pixels.PixOffset(x, line)
-			t.pixels.Pix[dst] = uint8(r)
-			t.pixels.Pix[dst+1] = uint8(g)
-			t.pixels.Pix[dst+2] = uint8(b)
-		}
-	}
-}
-
-func (t *Engine) drawLayerLineRepeat(line int, layer *Layer) {
-	yTile := (layer.origin.Y + line) % layer.pixelHeight
-	if yTile < 0 {
-		yTile += layer.pixelHeight
-	}
-	for x := 0; x < t.width; {
-		xTile := (layer.origin.X + x) % layer.pixelWidth
-		if xTile < 0 {
 			xTile += layer.pixelWidth
+			xTile %= layer.pixelWidth
 		}
 		tile := layer.tiles[yTile/layer.tileHeight*layer.width+xTile/layer.tileWidth]
 		if tile.Nil {
@@ -130,8 +98,14 @@ func (t *Engine) drawLayerLineRepeat(line int, layer *Layer) {
 
 		xImage := int(tile.ID) % layer.tileSet.Columns
 		xImage *= layer.tileWidth
-		for xx := xImage + xTile%layer.tileWidth; xx < xImage+layer.tileWidth && x < t.width; xx, x = xx+1, x+1 {
-			src := layer.image.PixOffset(xx, yImage)
+		for xx := xTile % layer.tileWidth; xx < layer.tileWidth && x < t.width; xx, x = xx+1, x+1 {
+			var src int
+			if tile.HorizontalFlip {
+				src = layer.image.PixOffset(xImage+layer.tileWidth-xx, yImage)
+			} else {
+				src = layer.image.PixOffset(xImage+xx, yImage)
+			}
+
 			r, g, b, a := layer.image.Palette[layer.image.Pix[src]].RGBA()
 			if a == 0 {
 				continue

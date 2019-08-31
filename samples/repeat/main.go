@@ -48,7 +48,7 @@ func update(screen *ebiten.Image) error {
 	_ = screen.ReplacePixels(frame.Pix)
 
 	// Draw the message
-	msg := fmt.Sprintf("TPS: %f\n", ebiten.CurrentTPS())
+	msg := fmt.Sprintf("TPS: %f, x: %d, y: %d\n", ebiten.CurrentTPS(), x, y)
 	_ = ebitenutil.DebugPrint(screen, msg)
 	return nil
 }

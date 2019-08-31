@@ -24,16 +24,16 @@ var (
 
 func update(screen *ebiten.Image) error {
 	if ebiten.IsKeyPressed(ebiten.KeyRight) {
-		x--
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		x++
 	}
+	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
+		x--
+	}
 	if ebiten.IsKeyPressed(ebiten.KeyDown) {
-		y--
+		y++
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		y++
+		y--
 	}
 	overworld.SetOrigin(x<<2, y<<2)
 
@@ -48,7 +48,7 @@ func update(screen *ebiten.Image) error {
 	_ = screen.ReplacePixels(frame.Pix)
 
 	// Draw the message
-	msg := fmt.Sprintf("TPS: %f\n", ebiten.CurrentTPS())
+	msg := fmt.Sprintf("TPS: %f, x: %d, y: %d\n", ebiten.CurrentTPS(), x, y)
 	_ = ebitenutil.DebugPrint(screen, msg)
 	return nil
 }
@@ -66,6 +66,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	//overworld.SetRepeat(true)
 	engine.AddLayer(overworld)
 
 	if err := ebiten.Run(update, screenWidth, screenHeight, 4, "scrolling"); err != nil {

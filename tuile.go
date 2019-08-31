@@ -104,13 +104,15 @@ func (t *Engine) drawTilePixel(x, y int, layer *Layer, tileID int, xTile, yTile 
 }
 
 func (t *Engine) drawLayerLine(line int, layer *Layer) {
-	if line < layer.origin.Y || line >= layer.origin.Y+layer.pixelHeight {
-		return // Out of vertical bounds
+	yTile := layer.origin.Y + line
+	if yTile < 0 || yTile >= layer.pixelHeight {
+		return
 	}
-
-	for x := max(0, layer.origin.X); x < min(t.width, layer.origin.X+layer.pixelWidth); x++ {
-		xTile := x - layer.origin.X
-		yTile := line - layer.origin.Y
+	for x := 0; x < t.width; x++ {
+		xTile := layer.origin.X + x
+		if xTile < 0 || xTile >= layer.pixelWidth {
+			continue
+		}
 		tile := layer.tileMap.Layers[0].Tiles[yTile/layer.tileHeight*layer.width+xTile/layer.tileWidth]
 		if tile.Nil {
 			continue

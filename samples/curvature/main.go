@@ -18,10 +18,11 @@ const (
 )
 
 var (
-	engine            *tuile.Engine
-	clouds, overworld *tuile.Layer
-	x, y              int
-	offsets           = [screenHeight]float64{}
+	engine                      *tuile.Engine
+	clouds, overworld           *tuile.Layer
+	x, y                        = 0, 64
+	offsets                     = [screenHeight]float64{}
+	cloudsRatio, overworldRatio = 64.0, 320.0
 )
 
 func lerp(x2, x1, x3, y1, y3 int) float64 {
@@ -30,20 +31,29 @@ func lerp(x2, x1, x3, y1, y3 int) float64 {
 
 func update(screen *ebiten.Image) error {
 	if ebiten.IsKeyPressed(ebiten.KeyRight) {
-		x--
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		x++
 	}
+	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
+		x--
+	}
 	if ebiten.IsKeyPressed(ebiten.KeyDown) {
-		y--
+		y++
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		y += 2
+		y--
 	}
-
-	// Auto-scrolling
-	y--
+	if ebiten.IsKeyPressed(ebiten.KeyQ) {
+		cloudsRatio++
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyA) {
+		cloudsRatio--
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyW) {
+		overworldRatio++
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyS) {
+		overworldRatio--
+	}
 
 	if ebiten.IsDrawingSkipped() {
 		return nil
@@ -56,7 +66,7 @@ func update(screen *ebiten.Image) error {
 	_ = screen.ReplacePixels(frame.Pix)
 
 	// Draw the message
-	msg := fmt.Sprintf("TPS: %f, %d, %d\n", ebiten.CurrentTPS(), x, y)
+	msg := fmt.Sprintf("TPS: %.f, clouds(q/a): %d, overworld(w/s): %d\n", ebiten.CurrentTPS(), x, y)
 	_ = ebitenutil.DebugPrint(screen, msg)
 	return nil
 }
@@ -97,6 +107,6 @@ func main() {
 }
 
 func hBlank(line int) {
-	clouds.SetOrigin(-x<<1, y*4+int(offsets[line]*64)-line)
-	overworld.SetOrigin(x<<2, y*4+int(offsets[line]*-16)-line)
+	clouds.SetOrigin(x<<2, y<<2+int(offsets[line]*cloudsRatio)-line)
+	overworld.SetOrigin(x<<2, y<<1+int(offsets[line]*overworldRatio)-line)
 }

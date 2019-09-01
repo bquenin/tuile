@@ -20,9 +20,9 @@ const (
 var (
 	engine                      *tuile.Engine
 	clouds, overworld           *tuile.Layer
-	x, y                        = 0, 0
+	x, y                        = 0, 64
 	offsets                     = [screenHeight]float64{}
-	cloudsRatio, overworldRatio = 64.0, 320.0
+	cloudsRatio, overworldRatio = 64.0, 160.0
 )
 
 func lerp(x2, x1, x3, y1, y3 int) float64 {
@@ -66,7 +66,7 @@ func update(screen *ebiten.Image) error {
 	_ = screen.ReplacePixels(frame.Pix)
 
 	// Draw the message
-	msg := fmt.Sprintf("TPS: %.f, clouds(q/a): %d, overworld(w/s): %d\n", ebiten.CurrentTPS(), x, y)
+	msg := fmt.Sprintf("TPS: %.f\n", ebiten.CurrentTPS())
 	_ = ebitenutil.DebugPrint(screen, msg)
 	return nil
 }

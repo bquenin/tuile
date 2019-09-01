@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"image/color"
+	"log"
+	"math"
+
 	"github.com/bquenin/tmxmap"
 	"github.com/bquenin/tuile"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
-	"image/color"
-	"log"
-	"math"
 )
 
 const (
@@ -19,7 +20,7 @@ const (
 var (
 	engine                      *tuile.Engine
 	clouds, overworld           *tuile.Layer
-	x, y                        = 0, 64
+	x, y                        = 0, 0
 	offsets                     = [screenHeight]float64{}
 	cloudsRatio, overworldRatio = 64.0, 320.0
 )

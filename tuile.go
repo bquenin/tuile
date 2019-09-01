@@ -72,8 +72,8 @@ func (t *Engine) drawLayerLine(line int, layer *Layer) {
 		if !layer.repeat {
 			return
 		}
-		yTile += layer.pixelHeight
-		yTile %= layer.pixelHeight
+		// https://maurobringolf.ch/2017/12/a-neat-trick-to-compute-modulo-of-negative-numbers/
+		yTile = (yTile%layer.pixelHeight + layer.pixelHeight) % layer.pixelHeight
 	}
 
 	for x := 0; x < t.width; {
@@ -83,8 +83,8 @@ func (t *Engine) drawLayerLine(line int, layer *Layer) {
 				x++
 				continue
 			}
-			xTile += layer.pixelWidth
-			xTile %= layer.pixelWidth
+			// https://maurobringolf.ch/2017/12/a-neat-trick-to-compute-modulo-of-negative-numbers/
+			xTile = (xTile%layer.pixelWidth + layer.pixelWidth) % layer.pixelWidth
 		}
 		tile := layer.tiles[yTile/layer.tileHeight*layer.width+xTile/layer.tileWidth]
 		if tile.Nil {

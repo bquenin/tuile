@@ -9,7 +9,6 @@ import (
 
 // Layer structure
 type Layer struct {
-	//tileMap                 *tmxmap.Map
 	origin                  image.Point
 	width, height           int
 	pixelWidth, pixelHeight int

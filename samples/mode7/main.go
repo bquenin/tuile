@@ -13,13 +13,13 @@ import (
 )
 
 const (
-	screenWidth  = 256 << 1
-	screenHeight = 240 << 1
+	screenWidth  = 256
+	screenHeight = 240
 )
 
 var (
 	engine  *tuile.Engine
-	clouds  *tuile.Layer
+	track   *tuile.Layer
 	x, y, θ = .0, .0, math.Pi
 	ratio   = 4.0
 )
@@ -49,8 +49,8 @@ func update(screen *ebiten.Image) error {
 	if ebiten.IsKeyPressed(ebiten.KeyA) {
 		ratio -= 0.02
 	}
-	clouds.SetOrigin(int(x), int(y))
-	clouds.SetRotation(θ)
+	track.SetOrigin(int(x), int(y))
+	track.SetRotation(θ)
 
 	if ebiten.IsDrawingSkipped() {
 		return nil
@@ -73,24 +73,24 @@ func main() {
 	engine.SetBackgroundColor(color.Black)
 	engine.SetHBlank(hBlank)
 
-	tileMap, err := tmxmap.Load("../assets/smk/rainbow.tmx")
+	tileMap, err := tmxmap.Load("../assets/smk/track.tmx")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	clouds, err = tuile.NewLayer(tileMap)
+	track, err = tuile.NewLayer(tileMap)
 	if err != nil {
 		log.Fatal(err)
 	}
-	clouds.SetTranslation(screenWidth/2, screenHeight)
-	engine.AddLayer(clouds)
+	track.SetTranslation(screenWidth/2, screenHeight)
+	engine.AddLayer(track)
 
-	if err := ebiten.Run(update, screenWidth, screenHeight, 2, "mode7"); err != nil {
+	if err := ebiten.Run(update, screenWidth, screenHeight, 4, "mode7"); err != nil {
 		log.Fatal(err)
 	}
 }
 
 func hBlank(line int) {
 	scale := lerp(float64(line), 0, float64(screenHeight), 0.2, 5)
-	clouds.SetScale(scale*ratio, scale*ratio)
+	track.SetScale(scale*ratio, scale*ratio)
 }

@@ -55,9 +55,9 @@ func update(screen *ebiten.Image) error {
 
 func main() {
 	engine = tuile.NewEngine(screenWidth, screenHeight)
-	engine.SetBackgroundColor(color.Black)
+	engine.SetBackgroundColor(color.RGBA{R: 0x66, G: 0xCC, B: 0xFF})
 
-	tileMap, err := tmxmap.Load("../assets/track1_bg.tmx")
+	tileMap, err := tmxmap.Load("../assets/clouds.tmx")
 	if err != nil {
 		log.Fatal(err)
 	}

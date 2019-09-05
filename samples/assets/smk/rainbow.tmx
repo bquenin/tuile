@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" name="bq\rainbow_bank.png" tilewidth="16" tileheight="16" tilecount="187" columns="11">
+  <image source="rainbow.png" width="176" height="272"/>
+ </tileset>
+ <layer id="1" name="ShoeBox Tile Grab" width="60" height="60">
+  <data encoding="base64" compression="zlib">
+   eJzt2+VbFUEUBvCDiRhgo6Lciy12ICZiY3cHYnd3d3d3d/sX+s4zZx+W8a4ws8PuXt0Pvw8w7Nx5uXc5E0sGEWVAHagL9aA+NICGkAmNIAsah9iWxe1NeJxNedwmmkE2958Z0bw5rqzNoQW0NMjaivtqzZnbRDSvaGsLuZy1HbQ3yNuB5XHmsDOlauvIWTtBPiRcdPMmWQHrDF2gq0FftaUb5+wOPVxjThr01VPRKwL5Uin0oNtPb0WfCGRLpa8H3X7yFGHn8pLvQbeffoqwc3np70G3nwGKsHN5GehBt59BirBzecn1oNtPgSLsXF4Ge9DtR61HYefyUlv1KOxcXuJ6FNejmojrUTTF9SiuRzUR16No+p/q0RCqrD9JVkRm96+tejQUimEYDIcRMBJGwWgogTEGbaUwlmTtGQfjYYIru+44bdSjUn7tBMm9w4kwCSZDGUyBqTDNsG06zICZJPdSxd8pZ59Rd6yzYDabY3D9XH5dkXeej0zVtc2HBa7MwkKD8fq5fxe5ftfiM1ZUi3nL+D3O5syLDbK6798lTOfapbCMKj9jIvNyHvcKWAnlsAoqYDWsMWwTX6/ln1lnmFVYz0zu32wXZz67gaK1d63yM5+0NacNkjOP3Mh0rrU1pw3SJmYyn7Q1pw2Sn/mkrTltkJw6tJnpXGtrThukLcxkPmlrjyVIfuaTtvZYguTUoa1M59p0rEfbmMn+RoI5dWg77ICdsCsC2VLxs7+RZOKe3Q17YC/JZxLE8wn7YD8cgINwCA7DETgaUJtYnxa7xuynHh0juVY4zllPkHzOIkrPf4j1qXgO4iSP2e/+ximS6wUnq3i9RITyijbxzIf4/J0mO/sbZ+AsyfXLOTgPF+AiXILLcIV/5mqAbSL7Nc5ayO9Luuy3m7gON0jWSGcdly777abUWpku++2m1LVbuuy3m1LXbumy325KXbulw367H+raLV3Of02pa7d/uR4J6totrkf/lrgeVXUzAmO06W/16BbcTnHNHZJnk37PgETbXZLnnUFkvQf3SdahByTXhsJDkrXoETyGJ1R5FmvzzEtte0ry7NdGtmf053nyc3gBL0neuwl4xTlfw5sajvstvNMYS4Xl35NOmzjPE2fk7vPx95z1A3+vun4+wieNvCUh5RX/qyTWgDmc+bNrTF/4ffhKVc8ma3Ns3/g1bXyexVq3nKqeoYr9h+/wg/Q+jz+5Hxt5f5E83w3q77PqN//hBak=
+  </data>
+ </layer>
+</map>

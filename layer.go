@@ -18,6 +18,10 @@ type Layer struct {
 	image                   *image.Paletted
 	repeat                  bool
 	disabled                bool
+	transformed             bool
+	angle                   float64 //radians
+	translation             Vector
+	scale                   Vector
 }
 
 // NewLayer instantiates a new layer
@@ -27,7 +31,6 @@ func NewLayer(tileMap *tmxmap.Map) (*Layer, error) {
 		return nil, errors.New("tileset image is not paletted")
 	}
 	return &Layer{
-		//tileMap:     tileMap,
 		tiles:       tileMap.Layers[0].Tiles,
 		tileSet:     &tileMap.TileSets[0],
 		image:       image,
@@ -38,11 +41,12 @@ func NewLayer(tileMap *tmxmap.Map) (*Layer, error) {
 		tileWidth:   tileMap.TileSets[0].TileWidth,
 		tileHeight:  tileMap.TileSets[0].TileHeight,
 		repeat:      false,
+		scale:       VInt(1, 1),
 	}, nil
 }
 
 func (l *Layer) SetOrigin(x int, y int) {
-	l.origin = image.Point{X: x, Y: y}
+	l.origin = image.Pt(x, y)
 }
 
 func (l *Layer) SetRepeat(repeat bool) {
@@ -55,4 +59,28 @@ func (l *Layer) Disable() {
 
 func (l *Layer) Enable() {
 	l.disabled = false
+}
+
+func (l *Layer) SetRotation(angle float64) {
+	l.transformed = true
+	l.angle = angle
+}
+
+func (l *Layer) SetScale(sx, sy float64) {
+	l.transformed = true
+	l.scale = V(sx, sy)
+}
+
+func (l *Layer) SetTranslation(dx, dy float64) {
+	l.transformed = true
+	l.translation = V(dx, dy)
+}
+
+func (l *Layer) transform(left, right Vector) (Vector, Vector) {
+	dx, dy := float64(l.origin.X)+l.translation.X, float64(l.origin.Y)+l.translation.Y
+	translate := IM.Translate(V(-dx, -dy))
+	rotation := translate.Rotate(l.angle)
+	scale := rotation.Scale(l.scale)
+	result := scale.Translate(V(dx, dy))
+	return left.Mul(result), right.Mul(result)
 }

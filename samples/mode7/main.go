@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"image"
 	"image/color"
 	"log"
 	"math"
@@ -14,14 +15,15 @@ import (
 
 const (
 	screenWidth  = 256
-	screenHeight = 240
+	screenHeight = 224
 )
 
 var (
-	engine  *tuile.Engine
-	track   *tuile.Layer
-	x, y, θ = .0, .0, math.Pi
-	ratio   = 4.0
+	frameBuffer = image.NewRGBA(image.Rect(0, 0, screenWidth, screenHeight))
+	engine      *tuile.Engine
+	track       *tuile.Layer
+	x, y, θ     = .0, .0, math.Pi
+	ratio       = 4.0
 )
 
 func lerp(x2, x1, x3, y1, y3 float64) float64 {
@@ -57,10 +59,10 @@ func update(screen *ebiten.Image) error {
 	}
 
 	// Draw the frame
-	frame := engine.DrawFrame()
+	engine.DrawFrame()
 
 	// Display it on screen
-	_ = screen.ReplacePixels(frame.Pix)
+	_ = screen.ReplacePixels(frameBuffer.Pix)
 
 	// Draw the message
 	msg := fmt.Sprintf("TPS: %f\n", ebiten.CurrentTPS())
@@ -72,8 +74,15 @@ func main() {
 	engine = tuile.NewEngine(screenWidth, screenHeight)
 	engine.SetBackgroundColor(color.Black)
 	engine.SetHBlank(hBlank)
+	engine.SetPlot(func(x, y int, r, g, b, a byte) {
+		i := frameBuffer.PixOffset(x, y)
+		frameBuffer.Pix[i] = r
+		frameBuffer.Pix[i+1] = g
+		frameBuffer.Pix[i+2] = b
+		frameBuffer.Pix[i+3] = a
+	})
 
-	tileMap, err := tmxmap.Load("../assets/smk/track.tmx")
+	tileMap, err := tmxmap.Load("../assets/smk/rainbow.tmx")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"image"
 	"image/color"
 	"log"
 	"math"
@@ -14,10 +15,11 @@ import (
 
 const (
 	screenWidth  = 256
-	screenHeight = 240
+	screenHeight = 224
 )
 
 var (
+	frameBuffer = image.NewRGBA(image.Rect(0, 0, screenWidth, screenHeight))
 	engine                      *tuile.Engine
 	clouds, overworld           *tuile.Layer
 	x, y                        = 0, 64
@@ -60,10 +62,10 @@ func update(screen *ebiten.Image) error {
 	}
 
 	// Draw the frame
-	frame := engine.DrawFrame()
+	engine.DrawFrame()
 
 	// Display it on screen
-	_ = screen.ReplacePixels(frame.Pix)
+	_ = screen.ReplacePixels(frameBuffer.Pix)
 
 	// Draw the message
 	msg := fmt.Sprintf("TPS: %.f\n", ebiten.CurrentTPS())
@@ -75,10 +77,17 @@ func main() {
 	for n := 0; n < screenHeight; n++ {
 		offsets[n] = math.Tan(lerp(n, 0, screenHeight, 105.0, 180.0) * math.Pi / 180)
 	}
-
 	engine = tuile.NewEngine(screenWidth, screenHeight)
 	engine.SetBackgroundColor(color.Black)
 	engine.SetHBlank(hBlank)
+	engine.SetPlot(func(x, y int, r, g, b, a byte) {
+		i := frameBuffer.PixOffset(x, y)
+		frameBuffer.Pix[i] = r
+		frameBuffer.Pix[i+1] = g
+		frameBuffer.Pix[i+2] = b
+		frameBuffer.Pix[i+3] = a
+	})
+
 
 	overworldMap, err := tmxmap.Load("../assets/zelda3/overworld.tmx")
 	if err != nil {

@@ -1,12 +1,12 @@
 package tuile
 
 import (
-	"image"
 	"image/color"
 	"math"
 )
 
 type HBlank func(line int)
+type Plot func(x, y int, r, g, b, a byte)
 
 // Engine structure
 type Engine struct {
@@ -14,7 +14,7 @@ type Engine struct {
 	backgroundColor color.Color
 	width           int
 	height          int
-	pixels          *image.RGBA
+	plot            Plot
 	layers          []*Layer
 }
 
@@ -30,7 +30,6 @@ func NewEngine(width, height int) *Engine {
 	return &Engine{
 		width:  width,
 		height: height,
-		pixels: image.NewRGBA(image.Rect(0, 0, width, height)),
 	}
 }
 
@@ -38,11 +37,15 @@ func (t *Engine) SetHBlank(hBlank HBlank) {
 	t.hBlank = hBlank
 }
 
+func (t *Engine) SetPlot(plot Plot) {
+	t.plot = plot
+}
+
 func (t *Engine) SetBackgroundColor(color color.Color) {
 	t.backgroundColor = color
 }
 
-func (t *Engine) DrawFrame() *image.RGBA {
+func (t *Engine) DrawFrame() {
 	for line := 0; line < t.height; line++ {
 		if t.hBlank != nil {
 			t.hBlank(line)
@@ -61,17 +64,12 @@ func (t *Engine) DrawFrame() *image.RGBA {
 			}
 		}
 	}
-	return t.pixels
 }
 
 func (t *Engine) fillBackgroundLine(line int, color color.Color, width int) {
 	r, g, b, _ := color.RGBA()
 	for x := 0; x < width; x++ {
-		i := t.pixels.PixOffset(x, line)
-		t.pixels.Pix[i] = uint8(r)
-		t.pixels.Pix[i+1] = uint8(g)
-		t.pixels.Pix[i+2] = uint8(b)
-		t.pixels.Pix[i+3] = uint8(math.MaxUint8)
+		t.plot(x, line, byte(r), byte(g), byte(b), math.MaxUint8)
 	}
 }
 
@@ -124,11 +122,7 @@ func (t *Engine) drawLayerLine(line int, layer *Layer) {
 				continue
 			}
 
-			dst := t.pixels.PixOffset(x, line)
-			t.pixels.Pix[dst] = uint8(r)
-			t.pixels.Pix[dst+1] = uint8(g)
-			t.pixels.Pix[dst+2] = uint8(b)
-			t.pixels.Pix[dst+3] = uint8(math.MaxUint8)
+			t.plot(x, line, byte(r), byte(g), byte(b), math.MaxUint8)
 		}
 	}
 }
@@ -176,10 +170,6 @@ func (t *Engine) drawLayerLineAffine(line int, layer *Layer) {
 			continue
 		}
 
-		dst := t.pixels.PixOffset(x, line)
-		t.pixels.Pix[dst] = uint8(r)
-		t.pixels.Pix[dst+1] = uint8(g)
-		t.pixels.Pix[dst+2] = uint8(b)
-		t.pixels.Pix[dst+3] = uint8(math.MaxUint8)
+		t.plot(x, line, byte(r), byte(g), byte(b), math.MaxUint8)
 	}
 }

@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"image"
 	"image/color"
 	"log"
 	"math"
@@ -20,13 +21,14 @@ const (
 )
 
 var (
+	frameBuffer = image.NewRGBA(image.Rect(0, 0, screenWidth, screenHeight))
 	engine      *tuile.Engine
 	layer       *tuile.Layer
 	x, y, θ     = .0, .0, math.Pi
 	top, bottom = .2, 5.0
 	ratio       = .5
 
-	ctx, frameBuffer js.Value
+	ctx js.Value
 )
 
 func lerp(x2, x1, x3, y1, y3 float64) float64 {
@@ -63,6 +65,13 @@ func main() {
 	engine = tuile.NewEngine(screenWidth, screenHeight)
 	engine.SetBackgroundColor(color.Black)
 	engine.SetHBlank(hBlank)
+	engine.SetPlot(func(x, y int, r, g, b, a byte) {
+		i := frameBuffer.PixOffset(x, y)
+		frameBuffer.Pix[i] = r
+		frameBuffer.Pix[i+1] = g
+		frameBuffer.Pix[i+2] = b
+		frameBuffer.Pix[i+3] = a
+	})
 
 	tileMap, err := tmxmap.Decode(tmxResponse.Body)
 	if err != nil {
@@ -82,13 +91,23 @@ func main() {
 	canvas.Set("width", screenWidth)
 	canvas.Set("height", screenHeight)
 	ctx = canvas.Call("getContext", "2d")
-	frameBuffer = js.Global().Get("Uint8Array").New(4 * screenWidth * screenHeight)
-
-	done := make(chan struct{}, 0)
+	jsFrameBuffer := js.Global().Get("Uint8Array").New(4 * screenWidth * screenHeight)
 
 	// Render
+	done := make(chan struct{}, 0)
+
 	var renderFrame js.Func
+	old, ticks := .0, 0
+
 	renderFrame = js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		now := args[0].Float()
+		elapsed := now - old
+		old = now
+		ticks++
+		if ticks%60 == 0 {
+			doc.Call("getElementById", "fps").Set("innerHTML", fmt.Sprintf("FPS: %.2f", math.Round(1000/elapsed)))
+		}
+
 		x++
 		y++
 		θ += 0.01
@@ -96,10 +115,10 @@ func main() {
 		layer.SetRotation(θ)
 
 		// Draw the frame
-		frame := engine.DrawFrame()
+		engine.DrawFrame()
 
-		js.CopyBytesToJS(frameBuffer, frame.Pix)
-		clamped := js.Global().Get("Uint8ClampedArray").New(frameBuffer)
+		js.CopyBytesToJS(jsFrameBuffer, frameBuffer.Pix)
+		clamped := js.Global().Get("Uint8ClampedArray").New(jsFrameBuffer)
 		imgData := js.Global().Get("ImageData").New(clamped, screenWidth, screenHeight)
 		ctx.Call("putImageData", imgData, 0, 0)
 

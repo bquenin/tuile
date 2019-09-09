@@ -3,6 +3,10 @@ package tuile
 import (
 	"errors"
 	"image"
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
+	"io"
 
 	"github.com/bquenin/tmxmap"
 )
@@ -15,7 +19,7 @@ type Layer struct {
 	tileWidth, tileHeight   int
 	tiles                   []*tmxmap.TileInfo
 	tileSet                 *tmxmap.TileSet
-	image                   *image.Paletted
+	Image                   *image.Paletted
 	repeat                  bool
 	disabled                bool
 	transformed             bool
@@ -24,16 +28,25 @@ type Layer struct {
 	scale                   Vector
 }
 
+func NewLayerWithReader(tileMap *tmxmap.Map, reader io.Reader) (*Layer, error) {
+	var err error
+	tileMap.TileSets[0].Image.Image, _, err = image.Decode(reader)
+	if err != nil {
+		return nil, err
+	}
+	return NewLayer(tileMap)
+}
+
 // NewLayer instantiates a new layer
 func NewLayer(tileMap *tmxmap.Map) (*Layer, error) {
 	image, ok := tileMap.TileSets[0].Image.Image.(*image.Paletted)
 	if !ok {
-		return nil, errors.New("tileset image is not paletted")
+		return nil, errors.New("tileset Image is not paletted")
 	}
 	return &Layer{
 		tiles:       tileMap.Layers[0].Tiles,
 		tileSet:     &tileMap.TileSets[0],
-		image:       image,
+		Image:       image,
 		width:       tileMap.Layers[0].Width,
 		height:      tileMap.Layers[0].Height,
 		pixelWidth:  tileMap.Layers[0].Width * tileMap.TileSets[0].TileWidth,

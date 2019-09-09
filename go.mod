@@ -3,7 +3,7 @@ module github.com/bquenin/tuile
 go 1.13
 
 require (
-	github.com/bquenin/tmxmap v0.0.0-20190829035115-d257cf65cd69
+	github.com/bquenin/tmxmap v0.0.0-20190908225300-d90e7e7cda7a
 	github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1 // indirect
 	github.com/gofrs/flock v0.7.1 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20190812055157-5d271430af9f // indirect

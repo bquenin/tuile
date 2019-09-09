@@ -1,6 +1,8 @@
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/bquenin/tmxmap v0.0.0-20190829035115-d257cf65cd69 h1:QhaeQNrezF5re5+/Z938CdxHL7fJzy2RZ/HeXlE/X5o=
 github.com/bquenin/tmxmap v0.0.0-20190829035115-d257cf65cd69/go.mod h1:wIb6Q7cgGmXnSGVPPTnL4XNiMec4vRGFLmTWsJ+WJdw=
+github.com/bquenin/tmxmap v0.0.0-20190908225300-d90e7e7cda7a h1:Wj/0X2Z6ObRkuFu9b44LTE7zyiVGMjpFiKxGJVxeeAI=
+github.com/bquenin/tmxmap v0.0.0-20190908225300-d90e7e7cda7a/go.mod h1:wIb6Q7cgGmXnSGVPPTnL4XNiMec4vRGFLmTWsJ+WJdw=
 github.com/go-gl/glfw v0.0.0-20181213070059-819e8ce5125f h1:7MsFMbSn8Lcw0blK4+NEOf8DuHoOBDhJsHz04yh13pM=
 github.com/go-gl/glfw v0.0.0-20181213070059-819e8ce5125f/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
 github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1 h1:QbL/5oDUmRBzO9/Z7Seo6zf912W/a6Sr4Eu0G/3Jho0=

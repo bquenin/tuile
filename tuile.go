@@ -3,6 +3,7 @@ package tuile
 import (
 	"image"
 	"image/color"
+	"math"
 )
 
 type HBlank func(line int)
@@ -70,6 +71,7 @@ func (t *Engine) fillBackgroundLine(line int, color color.Color, width int) {
 		t.pixels.Pix[i] = uint8(r)
 		t.pixels.Pix[i+1] = uint8(g)
 		t.pixels.Pix[i+2] = uint8(b)
+		t.pixels.Pix[i+3] = uint8(math.MaxUint8)
 	}
 }
 
@@ -112,12 +114,12 @@ func (t *Engine) drawLayerLine(line int, layer *Layer) {
 		for xx := xTile % layer.tileWidth; xx < layer.tileWidth && x < t.width; xx, x = xx+1, x+1 {
 			var src int
 			if tile.HorizontalFlip {
-				src = layer.image.PixOffset(xImage+layer.tileWidth-1-xx, yImage)
+				src = layer.Image.PixOffset(xImage+layer.tileWidth-1-xx, yImage)
 			} else {
-				src = layer.image.PixOffset(xImage+xx, yImage)
+				src = layer.Image.PixOffset(xImage+xx, yImage)
 			}
 
-			r, g, b, a := layer.image.Palette[layer.image.Pix[src]].RGBA()
+			r, g, b, a := layer.Image.Palette[layer.Image.Pix[src]].RGBA()
 			if a == 0 {
 				continue
 			}
@@ -126,6 +128,7 @@ func (t *Engine) drawLayerLine(line int, layer *Layer) {
 			t.pixels.Pix[dst] = uint8(r)
 			t.pixels.Pix[dst+1] = uint8(g)
 			t.pixels.Pix[dst+2] = uint8(b)
+			t.pixels.Pix[dst+3] = uint8(math.MaxUint8)
 		}
 	}
 }
@@ -163,12 +166,12 @@ func (t *Engine) drawLayerLineAffine(line int, layer *Layer) {
 
 		var src int
 		if tile.HorizontalFlip {
-			src = layer.image.PixOffset(xImage+layer.tileWidth-1-(xTile%layer.tileWidth), yImage)
+			src = layer.Image.PixOffset(xImage+layer.tileWidth-1-(xTile%layer.tileWidth), yImage)
 		} else {
-			src = layer.image.PixOffset(xImage+xTile%layer.tileWidth, yImage)
+			src = layer.Image.PixOffset(xImage+xTile%layer.tileWidth, yImage)
 		}
 
-		r, g, b, a := layer.image.Palette[layer.image.Pix[src]].RGBA()
+		r, g, b, a := layer.Image.Palette[layer.Image.Pix[src]].RGBA()
 		if a == 0 {
 			continue
 		}
@@ -177,5 +180,6 @@ func (t *Engine) drawLayerLineAffine(line int, layer *Layer) {
 		t.pixels.Pix[dst] = uint8(r)
 		t.pixels.Pix[dst+1] = uint8(g)
 		t.pixels.Pix[dst+2] = uint8(b)
+		t.pixels.Pix[dst+3] = uint8(math.MaxUint8)
 	}
 }

@@ -1,0 +1,32 @@
+<html>
+	<head>
+		<title>tuile wasm</title>
+		<script src="wasm_exec.js"></script>
+		<script>
+			const go = new Go();
+			WebAssembly.instantiateStreaming(fetch('main.wasm'),go.importObject).then( res=> {
+				go.run(res.instance)	
+			})
+		</script>
+	<style>
+body {
+	background-color: black;
+	margin:0;
+	padding:0;
+}
+#tuile {
+	position:fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    margin-left: auto;
+	margin-right: auto;
+}
+	</style>
+	</head>
+	<body>
+		<canvas id="tuile"></canvas>
+	</body>
+</html>

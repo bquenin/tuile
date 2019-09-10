@@ -95,7 +95,6 @@ func main() {
 		frameBuffer.Pix[i+3] = a
 	})
 
-
 	tileMap, err := tmxmap.Load("../assets/f-zero/mc1.tmx")
 	if err != nil {
 		log.Fatal(err)

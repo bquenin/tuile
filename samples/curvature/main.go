@@ -19,7 +19,7 @@ const (
 )
 
 var (
-	frameBuffer = image.NewRGBA(image.Rect(0, 0, screenWidth, screenHeight))
+	frameBuffer                 = image.NewRGBA(image.Rect(0, 0, screenWidth, screenHeight))
 	engine                      *tuile.Engine
 	clouds, overworld           *tuile.Layer
 	x, y                        = 0, 64
@@ -87,7 +87,6 @@ func main() {
 		frameBuffer.Pix[i+2] = b
 		frameBuffer.Pix[i+3] = a
 	})
-
 
 	overworldMap, err := tmxmap.Load("../assets/zelda3/overworld.tmx")
 	if err != nil {

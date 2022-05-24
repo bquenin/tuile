@@ -23,10 +23,6 @@ format:
 # =============================================================================
 # Lint
 # =============================================================================
-.PHONY: lint-install
-lint-install:
-	@curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -d -b $(GOPATH)/bin v1.18.0
-
 .PHONY: lint
 lint:
 	@echo "Linting ..."

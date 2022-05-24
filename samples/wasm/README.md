@@ -4,22 +4,20 @@
 
  * Make sure the wasm Go helper is up to date:
 ```
- $ cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
+cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 ```
 
- * Install [Caddy](https://caddyserver.com/):
-```
- $ brew install caddy
-```
+ * Install [Caddy](https://caddyserver.com/docs/install)
 
 ## Build the sample
 
 ```
- $ GOARCH=wasm GOOS=js go build -o main.wasm main.go
+GOARCH=wasm GOOS=js go build -o main.wasm main.go
 ```
 
 ## Run the sample
+
 ```
-$ caddy start
+caddy run
 ```
  * Go to http://localhost/

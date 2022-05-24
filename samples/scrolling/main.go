@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/bquenin/tmxmap"
 	"image"
 	"image/color"
 	"log"
 
+	"github.com/bquenin/tmxmap"
 	"github.com/bquenin/tuile"
-	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 const (
@@ -24,7 +24,21 @@ var (
 	x, y        int
 )
 
-func update(screen *ebiten.Image) error {
+type Game struct {
+	offscreen *ebiten.Image
+}
+
+func NewGame() *Game {
+	return &Game{
+		offscreen: ebiten.NewImage(screenWidth, screenHeight),
+	}
+}
+
+func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
+	return screenWidth, screenHeight
+}
+
+func (g *Game) Update() error {
 	if ebiten.IsKeyPressed(ebiten.KeyRight) {
 		x++
 	}
@@ -39,20 +53,21 @@ func update(screen *ebiten.Image) error {
 	}
 	overworld.SetOrigin(x<<2, y<<2)
 
-	if ebiten.IsDrawingSkipped() {
-		return nil
-	}
-
 	// Draw the frame
 	engine.DrawFrame()
 
-	// Display it on screen
-	_ = screen.ReplacePixels(frameBuffer.Pix)
+	// Render it off-screen
+	g.offscreen.ReplacePixels(frameBuffer.Pix)
+
+	return nil
+}
+
+func (g *Game) Draw(screen *ebiten.Image) {
+	screen.DrawImage(g.offscreen, nil)
 
 	// Draw the message
 	msg := fmt.Sprintf("TPS: %f, x: %d, y: %d\n", ebiten.CurrentTPS(), x, y)
-	_ = ebitenutil.DebugPrint(screen, msg)
-	return nil
+	ebitenutil.DebugPrint(screen, msg)
 }
 
 func main() {
@@ -78,7 +93,7 @@ func main() {
 	//overworld.SetRepeat(true)
 	engine.AddLayer(overworld)
 
-	if err := ebiten.Run(update, screenWidth, screenHeight, 4, "scrolling"); err != nil {
+	if err := ebiten.RunGame(NewGame()); err != nil {
 		log.Fatal(err)
 	}
 }

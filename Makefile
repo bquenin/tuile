@@ -39,5 +39,5 @@ lint:
 .PHONY: mod-update
 mod-update:
 	@echo "Updating modules ..."
-	@go get -v all
+	@go get -d -u -v ./...
 	@go mod tidy

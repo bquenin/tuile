@@ -81,11 +81,8 @@ func (g *Game) Update() error {
 	track.SetOrigin(int(x), int(y))
 	track.SetRotation(θ)
 
-	// Draw the frame
-	engine.DrawFrame()
-
-	// Render it off-screen
-	g.offscreen.ReplacePixels(frameBuffer.Pix)
+	// Render off-screen
+	g.offscreen.ReplacePixels(engine.Render())
 
 	return nil
 }
@@ -102,13 +99,6 @@ func main() {
 	engine = tuile.NewEngine(screenWidth, screenHeight)
 	engine.SetBackgroundColor(color.Black)
 	engine.SetHBlank(hBlank)
-	engine.SetPlot(func(x, y int, r, g, b, a byte) {
-		i := frameBuffer.PixOffset(x, y)
-		frameBuffer.Pix[i] = r
-		frameBuffer.Pix[i+1] = g
-		frameBuffer.Pix[i+2] = b
-		frameBuffer.Pix[i+3] = a
-	})
 
 	tileMap, err := tmxmap.Load("../assets/f-zero/mc1.tmx")
 	if err != nil {
@@ -122,6 +112,7 @@ func main() {
 	track.SetTranslation(screenWidth/2, screenHeight)
 	engine.AddLayer(track)
 
+	ebiten.SetWindowSize(screenWidth*4, screenHeight*4)
 	if err := ebiten.RunGame(NewGame()); err != nil {
 		log.Fatal(err)
 	}

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"image"
 	"image/color"
 	"log"
 
@@ -18,10 +17,9 @@ const (
 )
 
 var (
-	frameBuffer = image.NewRGBA(image.Rect(0, 0, screenWidth, screenHeight))
-	engine      *tuile.Engine
-	overworld   *tuile.Layer
-	x, y        int
+	engine    *tuile.Engine
+	overworld *tuile.Layer
+	x, y      int
 )
 
 type Game struct {
@@ -53,11 +51,8 @@ func (g *Game) Update() error {
 	}
 	overworld.SetOrigin(x<<2, y<<2)
 
-	// Draw the frame
-	engine.DrawFrame()
-
-	// Render it off-screen
-	g.offscreen.ReplacePixels(frameBuffer.Pix)
+	// Render off-screen
+	g.offscreen.ReplacePixels(engine.Render())
 
 	return nil
 }
@@ -73,13 +68,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 func main() {
 	engine = tuile.NewEngine(screenWidth, screenHeight)
 	engine.SetBackgroundColor(color.Black)
-	engine.SetPlot(func(x, y int, r, g, b, a byte) {
-		i := frameBuffer.PixOffset(x, y)
-		frameBuffer.Pix[i] = r
-		frameBuffer.Pix[i+1] = g
-		frameBuffer.Pix[i+2] = b
-		frameBuffer.Pix[i+3] = a
-	})
 
 	tileMap, err := tmxmap.Load("../assets/zelda3/overworld.tmx")
 	if err != nil {
@@ -90,9 +78,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//overworld.SetRepeat(true)
+
 	engine.AddLayer(overworld)
 
+	ebiten.SetWindowSize(screenWidth*4, screenHeight*4)
 	if err := ebiten.RunGame(NewGame()); err != nil {
 		log.Fatal(err)
 	}

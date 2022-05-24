@@ -14,8 +14,8 @@ type Engine struct {
 	backgroundColor color.Color
 	width           int
 	height          int
-	plot            Plot
 	layers          []*Layer
+	frame           []byte
 }
 
 func abs(a int) int {
@@ -30,6 +30,7 @@ func NewEngine(width, height int) *Engine {
 	return &Engine{
 		width:  width,
 		height: height,
+		frame:  make([]byte, width*height*4),
 	}
 }
 
@@ -37,15 +38,11 @@ func (t *Engine) SetHBlank(hBlank HBlank) {
 	t.hBlank = hBlank
 }
 
-func (t *Engine) SetPlot(plot Plot) {
-	t.plot = plot
-}
-
 func (t *Engine) SetBackgroundColor(color color.Color) {
 	t.backgroundColor = color
 }
 
-func (t *Engine) DrawFrame() {
+func (t *Engine) Render() []byte {
 	for line := 0; line < t.height; line++ {
 		if t.hBlank != nil {
 			t.hBlank(line)
@@ -64,12 +61,17 @@ func (t *Engine) DrawFrame() {
 			}
 		}
 	}
+	return t.frame
 }
 
 func (t *Engine) fillBackgroundLine(line int, color color.Color, width int) {
 	r, g, b, _ := color.RGBA()
 	for x := 0; x < width; x++ {
-		t.plot(x, line, byte(r), byte(g), byte(b), math.MaxUint8)
+		offset := (line*t.width + x) << 2
+		t.frame[offset+0] = byte(r)
+		t.frame[offset+1] = byte(g)
+		t.frame[offset+2] = byte(b)
+		t.frame[offset+3] = math.MaxInt8
 	}
 }
 
@@ -122,15 +124,19 @@ func (t *Engine) drawLayerLine(line int, layer *Layer) {
 				continue
 			}
 
-			t.plot(x, line, byte(r), byte(g), byte(b), math.MaxUint8)
+			offset := (line*t.width + x) << 2
+			t.frame[offset+0] = byte(r)
+			t.frame[offset+1] = byte(g)
+			t.frame[offset+2] = byte(b)
+			t.frame[offset+3] = math.MaxInt8
 		}
 	}
 }
 
 func (t *Engine) drawLayerLineAffine(line int, layer *Layer) {
 	left, right := layer.transform(
-		VInt(layer.origin.X, layer.origin.Y+line),
-		VInt(layer.origin.X+t.width, layer.origin.Y+line),
+		NewVector(float64(layer.origin.X), float64(layer.origin.Y+line)),
+		NewVector(float64(layer.origin.X+t.width), float64(layer.origin.Y+line)),
 	)
 
 	x1, y1 := left.X, left.Y
@@ -170,6 +176,10 @@ func (t *Engine) drawLayerLineAffine(line int, layer *Layer) {
 			continue
 		}
 
-		t.plot(x, line, byte(r), byte(g), byte(b), math.MaxUint8)
+		offset := (line*t.width + x) << 2
+		t.frame[offset+0] = byte(r)
+		t.frame[offset+1] = byte(g)
+		t.frame[offset+2] = byte(b)
+		t.frame[offset+3] = math.MaxInt8
 	}
 }

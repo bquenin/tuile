@@ -11,15 +11,11 @@ type Vector struct {
 func (v Vector) Mul(m Matrix) Vector {
 	x := m[0]*v.X + m[2]*v.Y + m[4]
 	y := m[1]*v.X + m[3]*v.Y + m[5]
-	return V(x, y)
+	return NewVector(x, y)
 }
 
-func V(x, y float64) Vector {
+func NewVector(x, y float64) Vector {
 	return Vector{x, y}
-}
-
-func VInt(x, y int) Vector {
-	return Vector{float64(x), float64(y)}
 }
 
 type Matrix [6]float64

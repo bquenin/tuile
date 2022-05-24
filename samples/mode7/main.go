@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"image"
 	"image/color"
 	"log"
 	"math"
@@ -19,11 +18,10 @@ const (
 )
 
 var (
-	frameBuffer = image.NewRGBA(image.Rect(0, 0, screenWidth, screenHeight))
-	engine      *tuile.Engine
-	track       *tuile.Layer
-	x, y, θ     = .0, .0, math.Pi
-	ratio       = 4.0
+	engine  *tuile.Engine
+	track   *tuile.Layer
+	x, y, θ = .0, .0, math.Pi
+	ratio   = 4.0
 )
 
 func lerp(x2, x1, x3, y1, y3 float64) float64 {
@@ -68,11 +66,9 @@ func (g *Game) Update() error {
 	track.SetOrigin(int(x), int(y))
 	track.SetRotation(θ)
 
-	// Draw the frame
-	engine.DrawFrame()
+	// Render off-screen
+	g.offscreen.ReplacePixels(engine.Render())
 
-	// Render it off-screen
-	g.offscreen.ReplacePixels(frameBuffer.Pix)
 	return nil
 }
 
@@ -88,13 +84,6 @@ func main() {
 	engine = tuile.NewEngine(screenWidth, screenHeight)
 	engine.SetBackgroundColor(color.Black)
 	engine.SetHBlank(hBlank)
-	engine.SetPlot(func(x, y int, r, g, b, a byte) {
-		i := frameBuffer.PixOffset(x, y)
-		frameBuffer.Pix[i] = r
-		frameBuffer.Pix[i+1] = g
-		frameBuffer.Pix[i+2] = b
-		frameBuffer.Pix[i+3] = a
-	})
 
 	tileMap, err := tmxmap.Load("../assets/smk/rainbow.tmx")
 	if err != nil {
@@ -108,6 +97,7 @@ func main() {
 	track.SetTranslation(screenWidth/2, screenHeight)
 	engine.AddLayer(track)
 
+	ebiten.SetWindowSize(screenWidth*4, screenHeight*4)
 	if err := ebiten.RunGame(NewGame()); err != nil {
 		log.Fatal(err)
 	}

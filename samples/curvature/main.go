@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"image"
 	"image/color"
 	"log"
 	"math"
@@ -19,7 +18,6 @@ const (
 )
 
 var (
-	frameBuffer                 = image.NewRGBA(image.Rect(0, 0, screenWidth, screenHeight))
 	engine                      *tuile.Engine
 	clouds, overworld           *tuile.Layer
 	x, y                        = 0, 64
@@ -71,11 +69,8 @@ func (g *Game) Update() error {
 		overworldRatio--
 	}
 
-	// Draw the frame
-	engine.DrawFrame()
-
-	// Render it off-screen
-	g.offscreen.ReplacePixels(frameBuffer.Pix)
+	// Render off-screen
+	g.offscreen.ReplacePixels(engine.Render())
 
 	return nil
 }
@@ -95,13 +90,6 @@ func main() {
 	engine = tuile.NewEngine(screenWidth, screenHeight)
 	engine.SetBackgroundColor(color.Black)
 	engine.SetHBlank(hBlank)
-	engine.SetPlot(func(x, y int, r, g, b, a byte) {
-		i := frameBuffer.PixOffset(x, y)
-		frameBuffer.Pix[i] = r
-		frameBuffer.Pix[i+1] = g
-		frameBuffer.Pix[i+2] = b
-		frameBuffer.Pix[i+3] = a
-	})
 
 	overworldMap, err := tmxmap.Load("../assets/zelda3/overworld.tmx")
 	if err != nil {
@@ -125,6 +113,7 @@ func main() {
 	clouds.SetRepeat(true)
 	engine.AddLayer(clouds)
 
+	ebiten.SetWindowSize(screenWidth*4, screenHeight*4)
 	if err := ebiten.RunGame(NewGame()); err != nil {
 		log.Fatal(err)
 	}

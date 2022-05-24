@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"image"
 	"image/color"
 	"log"
 
@@ -18,10 +17,9 @@ const (
 )
 
 var (
-	frameBuffer = image.NewRGBA(image.Rect(0, 0, screenWidth, screenHeight))
-	engine      *tuile.Engine
-	layer       *tuile.Layer
-	x, y        = 0, 0
+	engine *tuile.Engine
+	layer  *tuile.Layer
+	x, y   = 0, 0
 )
 
 type Game struct {
@@ -53,11 +51,8 @@ func (g *Game) Update() error {
 	}
 	layer.SetOrigin(x, y)
 
-	// Draw the frame
-	engine.DrawFrame()
-
-	// Render it off-screen
-	g.offscreen.ReplacePixels(frameBuffer.Pix)
+	// Render off-screen
+	g.offscreen.ReplacePixels(engine.Render())
 
 	return nil
 }
@@ -73,13 +68,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 func main() {
 	engine = tuile.NewEngine(screenWidth, screenHeight)
 	engine.SetBackgroundColor(color.RGBA{R: 0x66, G: 0xCC, B: 0xFF})
-	engine.SetPlot(func(x, y int, r, g, b, a byte) {
-		i := frameBuffer.PixOffset(x, y)
-		frameBuffer.Pix[i] = r
-		frameBuffer.Pix[i+1] = g
-		frameBuffer.Pix[i+2] = b
-		frameBuffer.Pix[i+3] = a
-	})
 
 	tileMap, err := tmxmap.Load("../assets/clouds.tmx")
 	if err != nil {
@@ -93,6 +81,7 @@ func main() {
 	layer.SetRepeat(true)
 	engine.AddLayer(layer)
 
+	ebiten.SetWindowSize(screenWidth*4, screenHeight*4)
 	if err := ebiten.RunGame(NewGame()); err != nil {
 		log.Fatal(err)
 	}

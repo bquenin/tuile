@@ -5,7 +5,6 @@ package main
 
 import (
 	"fmt"
-	"image"
 	"image/color"
 	"log"
 	"math"
@@ -22,7 +21,6 @@ const (
 )
 
 var (
-	frameBuffer = image.NewRGBA(image.Rect(0, 0, screenWidth, screenHeight))
 	engine      *tuile.Engine
 	layer       *tuile.Layer
 	x, y, θ     = .0, .0, math.Pi
@@ -66,13 +64,6 @@ func main() {
 	engine = tuile.NewEngine(screenWidth, screenHeight)
 	engine.SetBackgroundColor(color.Black)
 	engine.SetHBlank(hBlank)
-	engine.SetPlot(func(x, y int, r, g, b, a byte) {
-		i := frameBuffer.PixOffset(x, y)
-		frameBuffer.Pix[i] = r
-		frameBuffer.Pix[i+1] = g
-		frameBuffer.Pix[i+2] = b
-		frameBuffer.Pix[i+3] = a
-	})
 
 	tileMap, err := tmxmap.Decode(tmxResponse.Body)
 	if err != nil {
@@ -115,10 +106,8 @@ func main() {
 		layer.SetOrigin(int(x), int(y))
 		layer.SetRotation(θ)
 
-		// Draw the frame
-		engine.DrawFrame()
-
-		js.CopyBytesToJS(jsFrameBuffer, frameBuffer.Pix)
+		// Render
+		js.CopyBytesToJS(jsFrameBuffer, engine.Render())
 		clamped := js.Global().Get("Uint8ClampedArray").New(jsFrameBuffer)
 		imgData := js.Global().Get("ImageData").New(clamped, screenWidth, screenHeight)
 		ctx.Call("putImageData", imgData, 0, 0)

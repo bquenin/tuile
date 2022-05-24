@@ -1,6 +1,6 @@
 # Tuile  
   
-Tuile (french for tile) is a 2D graphics engine inspired from old
+Tuile (French for tile) is a 2D graphics engine inspired from old
 hardware and based on layers, tiles sets, tile maps and sprites. Its
 scanline rendering pipeline makes it perfect for raster effects.
 

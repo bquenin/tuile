@@ -6,7 +6,6 @@ import (
 )
 
 type HBlank func(line int)
-type Plot func(x, y int, r, g, b, a byte)
 
 // Engine structure
 type Engine struct {
@@ -16,13 +15,6 @@ type Engine struct {
 	height          int
 	layers          []*Layer
 	frame           []byte
-}
-
-func abs(a int) int {
-	if a < 0 {
-		return -a
-	}
-	return a
 }
 
 // NewEngine instantiates a new tuile engine
@@ -77,6 +69,13 @@ func (t *Engine) fillBackgroundLine(line int, color color.Color, width int) {
 
 func (t *Engine) AddLayer(layer ...*Layer) {
 	t.layers = append(t.layers, layer...)
+}
+
+func abs(a int) int {
+	if a < 0 {
+		return -a
+	}
+	return a
 }
 
 func (t *Engine) drawLayerLine(line int, layer *Layer) {

@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	screenWidth  = 256
-	screenHeight = 224
+	screenWidth  = 512
+	screenHeight = 448
 )
 
 var (
@@ -79,7 +79,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.DrawImage(g.offscreen, nil)
 
 	// Draw the message
-	msg := fmt.Sprintf("TPS: %.f\n", ebiten.CurrentTPS())
+	msg := fmt.Sprintf("TPS: %.f\nUP/DOWN/LEFT/RIGHT to move\nQ/A to curve clouds\nW/S to curve world", ebiten.CurrentTPS())
 	ebitenutil.DebugPrint(screen, msg)
 }
 
@@ -113,7 +113,7 @@ func main() {
 	clouds.SetRepeat(true)
 	engine.AddLayer(clouds)
 
-	ebiten.SetWindowSize(screenWidth*4, screenHeight*4)
+	ebiten.SetWindowSize(screenWidth*2, screenHeight*2)
 	if err := ebiten.RunGame(NewGame()); err != nil {
 		log.Fatal(err)
 	}

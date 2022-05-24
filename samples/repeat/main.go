@@ -61,7 +61,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.DrawImage(g.offscreen, nil)
 
 	// Draw the message
-	msg := fmt.Sprintf("TPS: %f\n", ebiten.CurrentTPS())
+	msg := fmt.Sprintf("TPS: %.f\nUP/DOWN/LEFT/RIGHT to move", ebiten.CurrentTPS())
 	ebitenutil.DebugPrint(screen, msg)
 }
 

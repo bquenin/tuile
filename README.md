@@ -20,3 +20,7 @@ instance, you can run the curvature sample using the following commands:
 cd samples/curvature
 go run .
 ``` 
+
+### Web Assembly Sample
+
+Check the instructions provided in the [README](./samples/wasm/README.md) to run this sample.

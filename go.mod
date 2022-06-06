@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/bquenin/tmxmap v0.0.0-20190908225300-d90e7e7cda7a
-	github.com/hajimehoshi/ebiten/v2 v2.3.2
+	github.com/hajimehoshi/ebiten/v2 v2.3.3
 )
 
 require (

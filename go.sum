@@ -2,8 +2,8 @@ github.com/bquenin/tmxmap v0.0.0-20190908225300-d90e7e7cda7a h1:Wj/0X2Z6ObRkuFu9
 github.com/bquenin/tmxmap v0.0.0-20190908225300-d90e7e7cda7a/go.mod h1:wIb6Q7cgGmXnSGVPPTnL4XNiMec4vRGFLmTWsJ+WJdw=
 github.com/ebitengine/purego v0.5.0 h1:JrMGKfRIAM4/QVKaesIIT7m/UVjTj5GYhRSQYwfVdpo=
 github.com/ebitengine/purego v0.5.0/go.mod h1:ah1In8AOtksoNK6yk5z1HTJeUkC1Ez4Wk2idgGslMwQ=
-github.com/hajimehoshi/ebiten/v2 v2.6.3 h1:xJ5klESxhflZbPUx3GdIPoITzgPgamsyv8aZCVguXGI=
-github.com/hajimehoshi/ebiten/v2 v2.6.3/go.mod h1:TZtorL713an00UW4LyvMeKD8uXWnuIuCPtlH11b0pgI=
+github.com/hajimehoshi/ebiten/v2 v2.6.4 h1:G6tABZ4/njmi8Qn/l4Bqq49UrONrWW7TKcMMOSjPcpk=
+github.com/hajimehoshi/ebiten/v2 v2.6.4/go.mod h1:TZtorL713an00UW4LyvMeKD8uXWnuIuCPtlH11b0pgI=
 github.com/jezek/xgb v1.1.0 h1:wnpxJzP1+rkbGclEkmwpVFQWpuE2PUGNUzP8SbfFobk=
 github.com/jezek/xgb v1.1.0/go.mod h1:nrhwO0FX/enq75I7Y7G8iN1ubpSGZEiA3v9e9GyRFlk=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
